@@ -1,19 +1,32 @@
 {
-  "name": "shop_foreground",
-  "version": "1.0.0",
-  "description": "商城前台系统",
-  "main": "index.js",
+  "name": "supermall",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/sunxianghe123/shop_foreground.git"
+  "dependencies": {
+    "axios": "^0.21.1",
+    "better-scroll": "^1.13.2",
+    "core-js": "^3.6.5",
+    "fastclick": "^1.0.6",
+    "vue": "^2.6.11",
+    "vue-lazyload": "^1.3.3",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
   },
-  "author": "sunxianghe",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sunxianghe123/shop_foreground/issues"
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "postcss-px-to-viewport": "^1.1.1",
+    "vue-template-compiler": "^2.6.11"
   },
-  "homepage": "https://github.com/sunxianghe123/shop_foreground#readme"
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
