@@ -15,7 +15,7 @@
       <DetailCommentInfo :comment-info="commentInfo" ref="comment" />
       <GoodsList :goods="recommends" ref="recommend" />
     </Scroll>
-    <DetailBottomBar @addToCart="addToCart"/>
+    <DetailBottomBar @addToCart="addInToCart"/>
 
     <BackTop @click.native="backClick" v-show="isShowBackTop" />
     <!-- <Toast :message="message" v-show="show"/> -->
@@ -50,6 +50,7 @@ import {
 import { itemListenerMixin } from "common/mixin";
 
 import {mapActions} from 'vuex'
+import {addInToCart} from "../../network/detail";
 
 // import Toast from 'components/common/toast/Toast'
 
@@ -86,11 +87,6 @@ export default {
       getThemeTopY: null, // 防抖
       currentIndex: 0, // 当前滚动到第几个主题
       isShowBackTop: false,
-
-      // toast相关
-      // message:'',
-      // show:false
-
     };
   },
   created() {
@@ -98,16 +94,18 @@ export default {
     this.id = this.$route.params.id;
     // 2.根据id请求详情数据
     getCurrentGoodInfo(this.id).then((res) => {
-      console.log(res);
+      console.log(res, 'res');
       const data = res.list[0];
+      console.log(data, 'data')
       // 1.获取顶部的图片轮播数据
       this.topImages = JSON.parse(data?.pics);
       // 2.获取商品信息
-      this.goods = new Goods(
-        data.itemInfo,
-        data.columns,
-        data.shopInfo.services
-      );
+      this.goods = data;
+      // new Goods(
+      //   data.itemInfo,
+      //   data.columns,
+      //   data.shopInfo.services
+      // );
 
       // 3.创建店铺信息的对象
       this.shop = new Shop(data.shopInfo);
@@ -127,7 +125,6 @@ export default {
 
     // 3.请求商品推荐数据
     getRecommend().then((res) => {
-      // console.log(res);
       this.recommends = res.data.list;
     });
 
@@ -163,34 +160,7 @@ export default {
     contentScroll(position) {
       // 1.获取y值
       const positionY = -position.y;
-      //2.positionY和主题中值进行对比
-      // [0，7938，9120，9452]
-      // positionY 在 0 和 7938 之间，index=0
-      // positionY 在 7938 和 9120 之间，index=1
-      // positionY 在 9120 和 9452 之间，index=2
-
-      // positionY 大于等于 9452值，index=3
       let length = this.themeTopYs.length;
-      // **法一 普通做法
-      /*   for (let i = 0; i < length; i++) {
-        // if (positionY > this.themeTopYs[i] && positionY < this.themeTopYs[i+1])(
-        // console.log(i);
-        //}
-        // 判断this.currentIndex != i 避免频繁打印
-
-        if (
-          this.currentIndex != i &&
-          ((i < length - 1 &&
-            positionY >= this.themeTopYs[i] &&
-            positionY < this.themeTopYs[i + 1]) ||
-            (i === length - 1 && positionY >= this.themeTopYs[i]))
-        ) {
-          // console.log(i);
-          this.currentIndex = i;
-          console.log(this.currentIndex);
-          this.$refs.nav.currentIndex = this.currentIndex;
-        }
-      } */
       // **法二 hack做法，引入一个最大值与最后一个值进行比较
       for (let i = 0; i < length - 1; i++) {
         if (
@@ -199,7 +169,6 @@ export default {
           positionY < this.themeTopYs[i + 1]
         ) {
           this.currentIndex = i;
-          // console.log(this.currentIndex);
           this.$refs.nav.currentIndex = this.currentIndex;
         }
       }
@@ -212,31 +181,10 @@ export default {
       this.$refs.scroll.scrollTo(0, 0);
     },
     // 加入购物车
-    addToCart(){
-      // 1.获取购物车需要展示的信息
-      const product = {};
-      product.image = this.topImages[0];
-      product.title = this.goods.title;
-      product.desc = this.goods.desc;
-      product.price = this.goods.realPrice;
-      product.id = this.id;
-      // 2.将商品添加到购物车里面
-      // this.$store.commit('addCart',product)
-      // this.$store.dispatch('addCart',product).then(res=>{
-      //   console.log(res);
-      // })
-      this.addCart(product).then(res=>{
-        console.log(res);
-        // this.show = true;
-        // this.message = res
-
-        // setTimeout(() => {
-        //   this.show = false;
-        //   this.message=''
-        // }, 1500);
-
-        this.$toast.show()
-      })
+    addInToCart(){
+      addInToCart({goods_id: this.goods.goods_id}).then(res=>{
+        this.$toast.show("添加成功")
+      });
     }
   },
 };
