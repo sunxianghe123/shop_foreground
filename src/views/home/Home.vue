@@ -196,11 +196,12 @@ export default {
   background-color: var(--color-tint);
   color: #fff;
   /*在使用浏览器原生滚动时, 为了让导航不跟随一起滚动 使用bs后就不需要了*/
-  /* position: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 9; */
+  z-index: 9;
+  height: 40px;
 }
 .tab-control {
   /* relative 就可以让z-index起效果 */
@@ -210,7 +211,6 @@ export default {
 /* bs滚动方案2 定位 */
 .content {
   overflow: hidden;
-
   position: absolute;
   top: 44px;
   bottom: 49px;

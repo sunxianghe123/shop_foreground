@@ -9,13 +9,13 @@
     >
       <DetailSwiper :top-images="topImages" />
       <DetailBaseInfo :goods="goods" />
-      <DetailShopInfo :shop="shop" />
+<!--      <DetailShopInfo :shop="shop" />-->
       <DetailGoodsInfo :detail-info="detailInfo" @imageLoad="imageLoad" />
-      <DetailParamInfo :param-info="paramInfo" ref="param" />
+<!--      <DetailParamInfo :param-info="paramInfo" ref="param" />-->
       <DetailCommentInfo :comment-info="commentInfo" ref="comment" />
       <GoodsList :goods="recommends" ref="recommend" />
     </Scroll>
-    <DetailBottomBar @addToCart="addInToCart"/>
+    <DetailBottomBar @addToCart="addInToCart" @buyGoods="buyGoods"/>
 
     <BackTop @click.native="backClick" v-show="isShowBackTop" />
     <!-- <Toast :message="message" v-show="show"/> -->
@@ -185,6 +185,9 @@ export default {
       addInToCart({goods_id: this.goods.goods_id}).then(res=>{
         this.$toast.show("添加成功")
       });
+    },
+    buyGoods(){
+      //TODO 调用支付接口
     }
   },
 };

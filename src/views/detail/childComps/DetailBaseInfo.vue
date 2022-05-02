@@ -2,10 +2,10 @@
   <!-- 商品基本信息 -->
   <!-- 有数据展示，无数据就不展示 Object.keys().length判断对象是不是空的  -->
   <div v-if="Object.keys(goods).length != 0" class="base-info">
-    <div class="info-title">{{ goods.title }}</div>
+    <div class="info-title">分类：{{ goods.title }}</div>
     <div class="info-price">
-      <span class="n-price">{{ goods.price }}</span>
-      <span v-if="goods.description" class="discount">{{ goods.description }}</span>
+      <span class="n-price">价格：{{ goods.price }}</span>
+      <span v-if="goods.description" class="info-other">详情：{{ goods.description }}</span>
     </div>
   </div>
 </template>
@@ -34,6 +34,7 @@ export default {
 }
 
 .info-title {
+  font-size: 18px;
   color: #222;
 }
 
