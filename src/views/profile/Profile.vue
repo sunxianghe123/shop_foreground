@@ -8,11 +8,11 @@
         <nut-avatar
           size="large"
           bg-icon
-          bg-image="http://img30.360buyimg.com/uba/jfs/t1/84318/29/2102/10483/5d0704c1Eb767fa74/fc456b03fdd6cbab.png"
+          :bg-image="avatar"
         ></nut-avatar>
       </div>
-      <span slot="title">名字</span>
-      <span slot="desc">性别：女</span>
+      <span slot="title">{{ name }}</span>
+      <span slot="desc">性别：{{ sex }}</span>
     </nut-cell>
 
     <nut-cell
@@ -20,7 +20,7 @@
       :show-icon="true"
       @click.native="editPathShow = true"
     >
-      <span slot="title">地址</span>
+      <span slot="title">地址：{{path}}</span>
       <span slot="sub-title"></span>
       <span slot="desc">编辑地址信息</span>
     </nut-cell>
@@ -31,19 +31,19 @@
       :show-icon="true"
       @click.native="editAgeShow = true"
     >
-      <span slot="title">年龄</span>
+      <span slot="title">年龄：{{age}}</span>
       <span slot="sub-title"></span>
       <span slot="desc">编辑年龄</span>
     </nut-cell>
 
     <nut-cell :is-link="true" :show-icon="true" @click.native="editJobShow = true">
-      <span slot="title">工作</span>
+      <span slot="title">工作：{{job}}</span>
       <span slot="sub-title"></span>
       <span slot="desc">编辑工作</span>
     </nut-cell>
 
     <nut-cell :is-link="true" :show-icon="true" @click.native="editPhoneShow = true">
-      <span slot="title">手机号码</span>
+      <span slot="title">手机号码：{{phone}}</span>
       <span slot="sub-title"></span>
       <span slot="desc">编辑手机号码</span>
     </nut-cell>
@@ -113,10 +113,12 @@
 
 <script>
 import {editUserInfo} from "../../network/profile";
+import {getCurrentUser} from "../../network/profile";
   export default {
     name: "Profile",
     data() {
       return {
+        result: {},
         path: '',
         age: '',
         job: '',
@@ -125,11 +127,25 @@ import {editUserInfo} from "../../network/profile";
         editAgeShow: false,
         editJobShow: false,
         editPhoneShow: false,
-        user_id: ''
+        user_id: '',
+        avatar: '',
+        name: '',
+        sex: ''
       }
     },
-    created() {
+    async created() {
       this.user_id = sessionStorage.getItem('user_id') || 1;
+      let res = await getCurrentUser(this.user_id);
+      if(res.code == 200) {
+        this.result = res.list[0];
+        this.name = this.result?.username;
+        this.avatar = this.result?.avatar;
+        this.sex = this.result?.sex;
+        this.path = this.result?.path;
+        this.phone = this.result?.phone;
+        this.age = this.result?.age;
+        this.job = this.result?.job;
+      }
     },
     methods: {
       popMassage(code) {
@@ -142,41 +158,41 @@ import {editUserInfo} from "../../network/profile";
       async editPathInfo() {
         let res = await editUserInfo({path: this.path, user_id: this.user_id});
         this.popMassage(res.code);
-        this.path = '';
+        // this.path = '';
         this.editPathShow = false;
       },
       cancelEditPath() {
-        this.path = '';
+        this.path = this.result?.path;;
         this.editPathShow = false;
       },
       async editAgeInfo() {
         let res = await editUserInfo({age: this.age, user_id: this.user_id});
         this.popMassage(res.code);
-        this.age = '';
+        // this.age = '';
         this.editAgeShow = false;
       },
       cancelEditAge() {
-        this.age = '';
+        this.age = this.result?.age;
         this.editAgeShow = false;
       },
       async editJobInfo() {
         let res = await editUserInfo({job: this.job, user_id: this.user_id});
         this.popMassage(res.code);
-        this.job = '';
+        // this.job = '';
         this.editJobShow = false;
       },
       cancelEditJob() {
-        this.job = '';
+        this.job = this.result?.job;
         this.editJobShow = false;
       },
       async editPhoneInfo() {
         let res = await editUserInfo({phone: this.phone, user_id: this.user_id});
         this.popMassage(res.code);
-        this.phone = '';
+        // this.phone = '';
         this.editPhoneShow = false;
       },
       cancelEditPhone() {
-        this.phone = '';
+        this.phone = this.result?.phone;
         this.editPhoneShow = false;
       },
     }
