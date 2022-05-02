@@ -5,12 +5,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    cartList: []
+    cartList: [],
+    is_checked: false
   },
   mutations: {
     // mutations唯一的目的就是修改state中状态
     // mutations中的每个方法尽可能完成的事件比较单一一点
     // 数量+1
+    changeChecked(state, payload) {
+      state.is_checked = payload;
+    },
     addCounter(state, payload) {
       payload.count++;
     },
@@ -24,13 +28,6 @@ export default new Vuex.Store({
     // 有判断逻辑建议放actions里面
     addCart(context, payload) {
       return new Promise((reslove,reject)=>{
-           // payload新添加的商品
-      // let oldProduct = null;
-      // for (let item of state.cartList) {
-      //   if (item.iid === payload.iid) {
-      //     oldProduct = item;
-      //   }
-      // }
 
       // 1.查找之前数组中是否有该商品
       let oldProduct = context.state.cartList.find(item => item.iid === payload.iid)

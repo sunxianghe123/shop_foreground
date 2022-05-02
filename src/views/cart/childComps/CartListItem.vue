@@ -2,19 +2,19 @@
   <div id="shop-item">
     <div class="item-selector">
       <CheckButton
-        :is-checked="itemInfo.checked"
+        :is-checked="itemInfo.is_checked"
         @click.native="checkClick"
       ></CheckButton>
     </div>
     <div class="item-img">
-      <img :src="itemInfo.image" alt="商品图片" />
+      <img :src="cover" alt="商品图片" />
     </div>
     <div class="item-info">
       <div class="item-title">{{ itemInfo.title }}</div>
-      <div class="item-desc">{{ itemInfo.desc }}</div>
+      <div class="item-desc">{{ itemInfo.description }}</div>
       <div class="info-bottom">
         <div class="item-price left">¥{{ itemInfo.price }}</div>
-        <div class="item-count right">x{{ itemInfo.count }}</div>
+        <div class="item-count right">x{{ itemInfo.num }}</div>
       </div>
     </div>
   </div>
@@ -22,11 +22,17 @@
 
 <script>
 import CheckButton from "components/common/checkButton/CheckButton";
+import {changeGoodChecked} from "../../../network/cart";
 
 export default {
   name: "CartListItem",
   components: {
     CheckButton,
+  },
+  data() {
+    return {
+      cover: ''
+    }
   },
   props: {
     itemInfo: {
@@ -36,10 +42,18 @@ export default {
       },
     },
   },
+  created() {
+    this.cover = JSON.parse(this.itemInfo.image)?.[0]?.thumbUrl;
+  },
   methods: {
-    checkClick() {
+    async checkClick() {
       // 这里能逆向修改state的cartList -> 修改对象的引用地址
-      this.itemInfo.checked = !this.itemInfo.checked;
+      this.itemInfo.is_checked = !this.itemInfo.is_checked;
+      // this.$store.commit('changeChecked', this.itemInfo.is_checked);
+      let res = await changeGoodChecked(this.itemInfo.id, Number(this.itemInfo.is_checked));
+      if(res.code !== 200) {
+        this.$toast.fail("选择失败")
+      }
     },
   },
 };

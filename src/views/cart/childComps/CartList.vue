@@ -1,7 +1,7 @@
 <template>
   <div class="cart-list">
     <Scroll class="content" ref="scroll">
-        <CartListItem v-for="item in cartList" :key="item.iid" :item-info="item">
+        <CartListItem v-for="item in cartList" :key="item.id" :item-info="item">
         </CartListItem>
     </Scroll>
   </div>
@@ -11,19 +11,28 @@
 import Scroll from "components/common/scroll/Scroll";
 
 import CartListItem from './CartListItem.vue'
-import { mapGetters } from "vuex";
+import {getCartList} from "../../../network/cart";
 export default {
   name: "CartList",
   components: {
     Scroll,
     CartListItem
   },
-  computed: {
-    ...mapGetters(["cartList"]),
+  data() {
+    return {
+      cartList: [],
+      id: ''
+    }
   },
   activated() {
       this.$refs.scroll.refresh()
   },
+  async created() {
+    this.id = sessionStorage.getItem('user_id');
+    let res = await getCartList(this.id);
+    console.log(res)
+    this.cartList = res?.data;
+  }
 };
 </script>
 

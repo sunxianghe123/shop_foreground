@@ -60,13 +60,10 @@ export default {
   data() {
     return {
       id: null,
+      goods_id: null,
       topImages: [], // 轮播图
       goods: {}, // 商品基本信息
-      shop: {}, // 店铺
       detailInfo: {},
-      paramInfo: {}, // 参数
-      commentInfo: {}, // 评论
-      recommends: [], // 推荐
       themeTopYs: [], // 标题内容对应的y值
       getThemeTopY: null, // 防抖
       currentIndex: 0, // 当前滚动到第几个主题
@@ -75,16 +72,16 @@ export default {
   },
   created() {
     // 1.保存传入的id
-    this.id = this.$route.params.id;
+    this.goods_id = this.$route.params.id;
+    this.id = sessionStorage.getItem("user_id")
     // 2.根据id请求详情数据
-    getCurrentGoodInfo(this.id).then((res) => {
-      console.log(res, 'res');
+    getCurrentGoodInfo(this.goods_id).then((res) => {
       const data = res.list[0];
-      console.log(data, 'data')
       // 1.获取顶部的图片轮播数据
       this.topImages = JSON.parse(data?.pics);
       // 2.获取商品信息
       this.goods = data;
+      console.log(this.goods)
     });
 
 
@@ -140,8 +137,14 @@ export default {
     },
     // 加入购物车
     addInToCart(){
-      console.log(this.goods.id)
-      addInToCart({goods_id: this.goods.id, user_id: this.id}).then(res=>{
+      addInToCart({
+        user_id: this.id,
+        goods_id: this.goods.id,
+        image: this.goods.cover,
+        title: this.goods.title,
+        description: this.goods.description,
+        price: this.goods.price,
+      }).then(res=>{
         if(res.code == 200){
           this.$toast.success('添加成功！');
         } else {

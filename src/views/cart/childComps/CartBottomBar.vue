@@ -1,13 +1,5 @@
 <template>
   <div class="bottom-bar">
-    <div class="check-content">
-      <CheckButton
-        :is-checked="isSelectAll"
-        @click.native="checkClick"
-        class="check-button"
-      ></CheckButton>
-      <span>全选</span>
-    </div>
     <div class="price">合计 : {{ totalPrice }}</div>
     <div class="calculate" @click="calcClick">去计算 ( {{ checkLength }} )</div>
   </div>
@@ -17,70 +9,47 @@
 import CheckButton from "components/common/checkButton/CheckButton";
 
 import { mapGetters } from "vuex";
+import {getCartList} from "../../../network/cart";
 export default {
   name: "CartBottomBar",
   components: {
     CheckButton,
   },
+  data(){
+    return {
+      cartList: [],
+      id: ''
+    }
+  },
+  async created() {
+    this.id = sessionStorage.getItem('user_id');
+    let res = await getCartList(this.id);
+    this.cartList = res?.data;
+  },
   computed: {
-    ...mapGetters(["cartList"]),
     // 合计
     totalPrice() {
       return (
         "￥" +
-        this.cartList
-          .filter((item) => {
-            return item.checked;
-          })
-          .reduce((preValue, item) => {
-            return preValue + item.price * item.count;
-          }, 0)
-          .toFixed(2)
+        this.cartList.filter((item) => {
+            return item.is_checked;
+          }).reduce((preValue, item) => {
+            return preValue + item.price * item.num;
+          }, 0).toFixed(2)
       );
     },
     // 去计算
     checkLength() {
-      return this.cartList.filter((item) => item.checked).length;
-    },
-    // 全选的显示状态
-    isSelectAll() {
-      // 购物车为空时
-      if (this.cartList.length === 0) return false;
-      // 1.使用filter
-      // return !(this.cartList.filter((item) => !item.checked).length);
-
-      // 2.使用find
-      // return !this.cartList.find(item=>!item.checked)
-
-      // 3.普通遍历
-      for (let item of this.cartList) {
-        if (!item.checked) {
-          return false;
-        }
-      }
-      return true;
-
-      // 4.使用every
-      // 5.使用some
+      return this.cartList.filter((item) => item.is_checked).length;
     },
   },
   methods: {
-    // 全选按钮的点击效果
-    checkClick() {
-      if (this.isSelectAll) {// 全部选中
-
-        this.cartList.forEach((item) => {
-          item.checked = false;
-        });
-      } else {// 部分或全部不选中
-        this.cartList.forEach((item) => (item.checked = true));
-      }
-      // 不能这样简写 会有bug
-      // this.cartList.forEach(item=>item.checked = !this.isSelectAll)
-    },
-    calcClick(){
+    async calcClick(){
+      let res = await getCartList(this.id);
+      this.cartList = res?.data;
+      this.$nextTick();
       if(this.checkLength==0){
-        this.$toast.show('请选择购买的商品',2000)
+        this.$toast.text('请选择购买的商品',2000)
       }
     }
   },
