@@ -20,3 +20,15 @@ export function getSlidesList() {
     url: '/slides/getSlidesList',
   })
 }
+
+export async function login(body) {
+  // TODO 自己写接口改这里api
+  return request( {
+    url: '/users/login',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+  });
+}

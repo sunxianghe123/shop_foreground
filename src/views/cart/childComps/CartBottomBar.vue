@@ -92,9 +92,14 @@ export default {
   display: flex;
   height: 40px;
   background-color: #eee;
-  position: relative;
+  /*position: relative;*/
   line-height: 40px;
   font-size: 14px;
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  z-index: 9;
 }
 .check-content {
   display: flex;

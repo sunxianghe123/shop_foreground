@@ -125,11 +125,11 @@ import {editUserInfo} from "../../network/profile";
         editAgeShow: false,
         editJobShow: false,
         editPhoneShow: false,
-        id: ''
+        user_id: ''
       }
     },
     created() {
-      this.id = sessionStorage.getItem('id') || 1;
+      this.user_id = sessionStorage.getItem('user_id') || 1;
     },
     methods: {
       popMassage(code) {
@@ -140,7 +140,7 @@ import {editUserInfo} from "../../network/profile";
         }
       },
       async editPathInfo() {
-        let res = await editUserInfo({path: this.path, id: this.id});
+        let res = await editUserInfo({path: this.path, user_id: this.user_id});
         this.popMassage(res.code);
         this.path = '';
         this.editPathShow = false;
@@ -150,7 +150,7 @@ import {editUserInfo} from "../../network/profile";
         this.editPathShow = false;
       },
       async editAgeInfo() {
-        let res = await editUserInfo({age: this.age, id: this.id});
+        let res = await editUserInfo({age: this.age, user_id: this.user_id});
         this.popMassage(res.code);
         this.age = '';
         this.editAgeShow = false;
@@ -160,7 +160,7 @@ import {editUserInfo} from "../../network/profile";
         this.editAgeShow = false;
       },
       async editJobInfo() {
-        let res = await editUserInfo({job: this.job, id: this.id});
+        let res = await editUserInfo({job: this.job, user_id: this.user_id});
         this.popMassage(res.code);
         this.job = '';
         this.editJobShow = false;
@@ -170,7 +170,7 @@ import {editUserInfo} from "../../network/profile";
         this.editJobShow = false;
       },
       async editPhoneInfo() {
-        let res = await editUserInfo({phone: this.phone, id: this.id});
+        let res = await editUserInfo({phone: this.phone, user_id: this.user_id});
         this.popMassage(res.code);
         this.phone = '';
         this.editPhoneShow = false;
