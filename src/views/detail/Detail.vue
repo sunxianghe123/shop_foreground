@@ -1,6 +1,10 @@
 <template>
   <div id="detail">
-    <DetailNavBar class="detail-nav" @titleClick="titleClick" ref="nav" />
+    <nut-navbar
+      @on-click-back="back"
+      :leftShow="true"
+      :rightShow="false"
+    >商品详情</nut-navbar>
     <Scroll
       class="content"
       ref="scroll"
@@ -9,16 +13,10 @@
     >
       <DetailSwiper :top-images="topImages" />
       <DetailBaseInfo :goods="goods" />
-<!--      <DetailShopInfo :shop="shop" />-->
-      <DetailGoodsInfo :detail-info="detailInfo" @imageLoad="imageLoad" />
-<!--      <DetailParamInfo :param-info="paramInfo" ref="param" />-->
-      <DetailCommentInfo :comment-info="commentInfo" ref="comment" />
-      <GoodsList :goods="recommends" ref="recommend" />
     </Scroll>
     <DetailBottomBar @addToCart="addInToCart" @buyGoods="buyGoods"/>
 
     <BackTop @click.native="backClick" v-show="isShowBackTop" />
-    <!-- <Toast :message="message" v-show="show"/> -->
   </div>
 </template>
 
@@ -26,14 +24,9 @@
 import DetailNavBar from "./childComps/DetailNavBar";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
-import DetailShopInfo from "./childComps/DetailShopInfo";
-import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
-import DetailParamInfo from "./childComps/DetailParamInfo";
-import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import DetailBottomBar from "./childComps/DetailBottomBar";
 
 import Scroll from "components/common/scroll/Scroll";
-import GoodsList from "components/content/goods/GoodsList";
 import BackTop from "components/content/backTop/BackTop";
 
 
@@ -41,10 +34,6 @@ import { debounce } from "common/utils";
 
 import {
   getCurrentGoodInfo,
-  getRecommend,
-  Goods,
-  Shop,
-  GoodsParam,
 } from "network/detail";
 
 import { itemListenerMixin } from "common/mixin";
@@ -60,13 +49,8 @@ export default {
     DetailNavBar,
     DetailSwiper,
     DetailBaseInfo,
-    DetailShopInfo,
-    DetailGoodsInfo,
-    DetailParamInfo,
-    DetailCommentInfo,
     DetailBottomBar,
     Scroll,
-    GoodsList,
     BackTop,
     // Toast
 
@@ -101,32 +85,8 @@ export default {
       this.topImages = JSON.parse(data?.pics);
       // 2.获取商品信息
       this.goods = data;
-      // new Goods(
-      //   data.itemInfo,
-      //   data.columns,
-      //   data.shopInfo.services
-      // );
-
-      // 3.创建店铺信息的对象
-      this.shop = new Shop(data.shopInfo);
-
-      // 4.保存商品的详情数据
-      this.detailInfo = data.detailInfo;
-
-      // 5.获取参数的信息
-      this.paramInfo = new GoodsParam(
-        data.itemParams.info,
-        data.itemParams.rule
-      );
-      if (data.rate.list) {
-        this.commentInfo = data.rate.list[0];
-      }
     });
 
-    // 3.请求商品推荐数据
-    getRecommend().then((res) => {
-      this.recommends = res.data.list;
-    });
 
     // 4.给getThemeTopY赋值(对给this.themeTopYs赋值的操作进行防抖)
     this.getThemeTopY = debounce(() => {
@@ -138,14 +98,12 @@ export default {
       this.themeTopYs.push(Number.MAX_VALUE); // js里面number的最大值
     }, 100);
   },
-  mounted() {},
   destroyed() {
     // detail没有keep-alive，所以这里不用deactivated
     // 取消全局事件的监听
     this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   methods: {
-    ...mapActions(['addCart']),
     imageLoad() {
       this.$refs.scroll.refresh();
       // 获取4个主题的offsetTop
@@ -182,12 +140,20 @@ export default {
     },
     // 加入购物车
     addInToCart(){
-      addInToCart({goods_id: this.goods.goods_id}).then(res=>{
-        this.$toast.show("添加成功")
+      console.log(this.goods.id)
+      addInToCart({goods_id: this.goods.id, user_id: this.id}).then(res=>{
+        if(res.code == 200){
+          this.$toast.success('添加成功！');
+        } else {
+          this.$toast.fail('添加失败！');
+        }
       });
     },
     buyGoods(){
       //TODO 调用支付接口
+    },
+    back(){
+      this.$router.back()
     }
   },
 };

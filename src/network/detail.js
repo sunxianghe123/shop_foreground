@@ -14,8 +14,7 @@ export function getCartList() {
 export function addInToCart(params) {
   return request({
     url:'/cart/addToCart',
-    method: 'POST',
-    body: params
+    params
   })
 }
 
