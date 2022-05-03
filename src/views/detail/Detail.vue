@@ -17,6 +17,18 @@
     <DetailBottomBar @addToCart="addInToCart" @buyGoods="buyGoods"/>
 
     <BackTop @click.native="backClick" v-show="isShowBackTop" />
+
+    <nut-popup :style="{ padding: '10px 10px 20px 10px', }" v-model="show">
+      <div class="pay-content">
+        <h3>
+          待支付金额为：{{goods.price}}
+        </h3>
+        <p>
+          请扫描付款码支付：
+        </p>
+        <img class="pay-img" alt='收款码' src="@/assets/img/cart/payCode.jpg"/>
+      </div>
+    </nut-popup>
   </div>
 </template>
 
@@ -40,6 +52,7 @@ import { itemListenerMixin } from "common/mixin";
 
 import {mapActions} from 'vuex'
 import {addInToCart} from "../../network/detail";
+import {getCartList} from "../../network/cart";
 
 // import Toast from 'components/common/toast/Toast'
 
@@ -68,6 +81,7 @@ export default {
       getThemeTopY: null, // 防抖
       currentIndex: 0, // 当前滚动到第几个主题
       isShowBackTop: false,
+      show: false,
     };
   },
   created() {
@@ -152,8 +166,9 @@ export default {
         }
       });
     },
-    buyGoods(){
+    async buyGoods(){
       //TODO 调用支付接口
+      this.show = true;
     },
     back(){
       this.$router.back()
@@ -179,5 +194,17 @@ export default {
 /* 给一个固定的高度 */
 .content {
   height: calc(100% - 44px);
+}
+
+.pay-img {
+  width: 100px;
+}
+.pay-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 </style>

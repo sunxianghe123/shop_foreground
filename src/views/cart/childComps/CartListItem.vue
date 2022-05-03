@@ -2,7 +2,7 @@
   <div id="shop-item">
     <div class="item-selector">
       <CheckButton
-        :is-checked="itemInfo.is_checked"
+        :is-checked="Boolean(itemInfo.is_checked)"
         @click.native="checkClick"
       ></CheckButton>
     </div>
@@ -17,12 +17,19 @@
         <div class="item-count right">x{{ itemInfo.num }}</div>
       </div>
     </div>
+    <div class="item-delete">
+      <nut-button
+        @click="removeItem"
+      >
+        删除商品
+      </nut-button>
+    </div>
   </div>
 </template>
 
 <script>
 import CheckButton from "components/common/checkButton/CheckButton";
-import {changeGoodChecked} from "../../../network/cart";
+import {changeGoodChecked, deleteGoodInCart, getCartList} from "../../../network/cart";
 
 export default {
   name: "CartListItem",
@@ -31,7 +38,9 @@ export default {
   },
   data() {
     return {
-      cover: ''
+      cover: '',
+      user_id: 0,
+      goods_id: 0,
     }
   },
   props: {
@@ -43,11 +52,13 @@ export default {
     },
   },
   created() {
+    console.log(this.itemInfo)
     this.cover = JSON.parse(this.itemInfo.image)?.[0]?.thumbUrl;
+    this.user_id = sessionStorage.getItem('user_id');
+    this.goods_id =this.itemInfo.goods_id;
   },
   methods: {
     async checkClick() {
-      // 这里能逆向修改state的cartList -> 修改对象的引用地址
       this.itemInfo.is_checked = !this.itemInfo.is_checked;
       // this.$store.commit('changeChecked', this.itemInfo.is_checked);
       let res = await changeGoodChecked(this.itemInfo.id, Number(this.itemInfo.is_checked));
@@ -55,6 +66,15 @@ export default {
         this.$toast.fail("选择失败")
       }
     },
+    async removeItem() {
+      let res = await deleteGoodInCart(this.user_id, this.goods_id);
+      if(res.code == 200) {
+        this.$toast.success('删除成功！');
+        location.reload();
+      } else {
+        this.$toast.fail('删除失败！')
+      }
+    }
   },
 };
 </script>
@@ -66,6 +86,7 @@ export default {
   font-size: 0;
   padding: 5px;
   border-bottom: 1px solid #ccc;
+  position: relative;
 }
 
 .item-selector {
@@ -118,5 +139,21 @@ export default {
 
 .info-bottom .item-price {
   color: orangered;
+}
+
+.item-delete {
+  width: 100px;
+  height: 50px;
+  color: #eb4868;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+.nut-button {
+  padding: 0 10px;
 }
 </style>

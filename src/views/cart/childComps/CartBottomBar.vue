@@ -2,6 +2,17 @@
   <div class="bottom-bar">
     <div class="price">合计 : {{ totalPrice }}</div>
     <div class="calculate" @click="calcClick">去计算 ( {{ checkLength }} )</div>
+    <nut-popup :style="{ padding: '10px 10px 20px 10px', }" v-model="show">
+      <div class="pay-content">
+        <h3>
+          总金额为：{{totalPrice}}
+        </h3>
+        <p>
+          请扫描付款码支付：
+        </p>
+        <img class="pay-img" alt='收款码' src="@/assets/img/cart/payCode.jpg"/>
+      </div>
+    </nut-popup>
   </div>
 </template>
 
@@ -18,7 +29,8 @@ export default {
   data(){
     return {
       cartList: [],
-      id: ''
+      id: '',
+      show: false,
     }
   },
   async created() {
@@ -51,6 +63,7 @@ export default {
       if(this.checkLength==0){
         this.$toast.text('请选择购买的商品',2000)
       }
+      this.show = true;
     }
   },
 };
@@ -91,5 +104,16 @@ export default {
   color: #fff;
   background-color: red;
   text-align: center;
+}
+.pay-img {
+  width: 100px;
+}
+.pay-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 </style>

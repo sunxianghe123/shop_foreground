@@ -28,6 +28,9 @@ export default {
       length: 0,
     }
   },
+  created() {
+    this.$nextTick()
+  }
 };
 </script>
 

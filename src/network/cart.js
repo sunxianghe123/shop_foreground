@@ -33,3 +33,12 @@ export function changeGoodChecked(id, is_checked) {
   })
 }
 
+export function deleteGoodInCart(user_id, goods_id) {
+  return request({
+    url:'/cart/deleteGoodInCart',
+    params: {
+      user_id,
+      goods_id
+    }
+  })
+}

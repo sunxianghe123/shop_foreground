@@ -30,7 +30,6 @@ export default {
   async created() {
     this.id = sessionStorage.getItem('user_id');
     let res = await getCartList(this.id);
-    console.log(res)
     this.cartList = res?.data;
   }
 };
@@ -39,6 +38,7 @@ export default {
 <style scoped>
 .cart-list {
   height: calc(100% - 44px - 49px - 40px);
+  margin-top: 80px;
 }
 .content {
   height: 100%;
