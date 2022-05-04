@@ -37,8 +37,8 @@ export default {
 
 <style scoped>
 .cart-list {
-  height: calc(100% - 44px - 49px - 40px);
-  margin-top: 80px;
+  height: calc(100% - 44px - 49px - 20px);
+  margin-top: 40px;
 }
 .content {
   height: 100%;
